@@ -1,0 +1,57 @@
+{
+  "name": "american-press",
+  "version": "1.0.0",
+  "description": "A web-app book browser.",
+  "main": "server/index.js",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "express": "^4.16.3",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "react-redux": "^5.0.7",
+    "react-router-dom": "^4.3.1",
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0"
+  },
+  "babel": {
+    "presets": [
+      "env",
+      "react",
+      "stage-2"
+    ]
+  },
+  "devDependencies": {
+    "morgan": "^1.9.1",
+    "redux-logger": "^3.0.6",
+    "webpack": "^4.16.5",
+    "webpack-cli": "^3.1.0"
+  },
+  "scripts": {
+    "postinstall": "npm run webpack",
+    "webpack": "./node_modules/webpack/bin/webpack.js",
+    "start:dev": "npm run webpack -- --watch --mode=development & nodemon server.js --ignore src/ --ignore dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nmelhado/americanpress.git"
+  },
+  "keywords": [
+    "books",
+    "literature",
+    "book"
+  ],
+  "authors": [
+    "Nicholas Melhado"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nmelhado/americanpress/issues"
+  },
+  "homepage": "https://github.com/nmelhado/americanpress#readme"
+}
