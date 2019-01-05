@@ -2,7 +2,7 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { logger } from 'redux-logger';
 import thunk from 'redux-thunk';
 
-import authReducer from './auth';
+import {authReducer} from './auth';
 
 const reducer = combineReducers({
   auth: authReducer,
