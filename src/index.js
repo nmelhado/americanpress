@@ -6,6 +6,7 @@ import { Router, Route } from 'react-router';
 import history from './history';
 import Home from './components/Home';
 import Nav from './components/Nav';
+import Results from './components/Results';
 import store from './store';
 
 ReactDOM.render(
@@ -14,6 +15,7 @@ ReactDOM.render(
       <Fragment>
         <Route path="/" component={Nav} />
         <Route exact path="/" component={Home} />
+        <Route path="/results/:search/:page/:author?" render={(props) => <Results {...props} />}/> 
       </Fragment>
 		</Router>
 	</Provider>,

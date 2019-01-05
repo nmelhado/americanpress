@@ -17,13 +17,12 @@ class Home extends Component {
 		});
 	}
 
-	handleSearch() {
-    console.log('Clicked!')
-		this.props.setIngredients(this.state.ingredients, this.props.history);
+	handleSearch(e) {
+    e.preventDefault();
+    this.props.history.push(`/results/${this.state.input}/1`)
 	}
 
   render() {
-    const { history } = this.props;
 		const { handleSearch, handleChange } = this;
 		const { input } = this.state;
     return (
@@ -32,7 +31,7 @@ class Home extends Component {
         <form onSubmit={handleSearch} id="homeSearchForm">
           <input placeholder="Search for a book by title or author..." onChange={handleChange} value={input} autoFocus />
           <br />
-          <button className="searchButton"><img src="search.png" />Search</button>
+          <button className="searchButton"><img src="/search.png" />Search</button>
         </form>
         <div className="spacer"></div>
       </div>
@@ -40,9 +39,4 @@ class Home extends Component {
   }
 };
 
-// const mapDispatchToProps = dispatch => ({
-//   addToCart: (product, qty, history) => dispatch(addToCart(product, qty, history)),
-// })
-
-// export default connect(null, mapDispatchToProps)(Home);
 export default Home;

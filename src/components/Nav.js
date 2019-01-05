@@ -28,9 +28,14 @@ class Nav extends Component {
 		});
 	}
 
-	handleSearch() {
-    console.log('Clicked!')
-		this.props.setIngredients(this.state.ingredients, this.props.history);
+	handleSearch(e) {
+    e.preventDefault();
+    e.target.blur();
+    const {input} = this.state;
+		this.setState({
+			input: ''
+		});
+    this.props.history.push(`/results/${input}/1`);
 	}
 
   render() {
@@ -39,17 +44,17 @@ class Nav extends Component {
 		const { input } = this.state;
     return (
       <Fragment>
-        <img id="banner" src="banner.png" />
+        <Link to="/"><img id="banner" src="/banner.png" /></Link>
         <div id="navBar" style={{ position: this.state.atTop ? 'relative' : 'fixed', top: 0 }}>
           <div id="navLinks">
-            <Link to="/"><img src="smallLogo.png" id="navLogo" />Home</Link>
+            <Link to="/"><img src="/smallLogo.png" id="navLogo" />Home</Link>
             <Link to="/subjects">Browse by Subject</Link>
             <Link to="/dummy1">Dummy 1</Link>
             <Link to="/dummy2">Dummy 2</Link>
           </div>
           <form onSubmit={handleSearch} id="navSearch">
             <input placeholder="Search for a book..." onChange={handleChange} value={input} />
-            <button><img src="search.png" /></button>
+            <button><img src="/search.png" /></button>
           </form>
         </div>
       </Fragment>
@@ -57,9 +62,4 @@ class Nav extends Component {
   }
 };
 
-// const mapDispatchToProps = dispatch => ({
-//   addToCart: (product, qty, history) => dispatch(addToCart(product, qty, history)),
-// })
-
-// export default connect(null, mapDispatchToProps)(Home);
 export default Nav;

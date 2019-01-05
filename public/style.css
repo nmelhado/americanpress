@@ -167,6 +167,71 @@ h1 {
   height: 50px;
 }
 
+.resultLine {
+  display: grid;
+  grid-template-areas:
+    'cover title title title date'
+    'cover authors authors authors authors'
+    'cover subjects subjects subjects amazon'
+    'cover subjects subjects subjects amazon';
+  grid-template-columns: 28% 18% 18% 18% 18%;
+  grid-template-rows: 110px 40px 40px 30px;
+  padding: 10px;
+  border-bottom: .5px solid #aaa;
+  background-color: #fefefe;
+}
+
+.previewContainer {
+  grid-area: cover;
+  height: 100%;
+  text-align: center;
+  overflow: hidden;
+}
+
+.previewTitle {
+  grid-area: title;
+  font-size: 2em;
+  padding: 30px 0 0 0;
+}
+
+.previewTitle a {
+  color: #1068a5;
+  text-decoration: none;
+}
+
+.previewAuthor {
+  grid-area: authors;
+}
+
+.previewAmazon {
+  grid-area: amazon;
+}
+
+.previewSubjects {
+  grid-area: subjects;
+}
+
+.previewDate {
+  grid-area: date;
+  padding-top: 45px;
+  color: #888;
+}
+
+.previewImage {
+  padding: 3% 0;
+  height: 90%;
+}
+
+.authorNames a {
+  color: #006fcf;
+  text-decoration: none;
+}
+
+.subjectNames a {
+  color: #69a2d4;
+  text-decoration: none;
+}
+
 footer {
   width: 100%;
   text-align: center;
