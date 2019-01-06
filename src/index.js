@@ -7,6 +7,7 @@ import history from './history';
 import Home from './components/Home';
 import Nav from './components/Nav';
 import Results from './components/Results';
+import Book from './components/Book';
 import store from './store';
 
 ReactDOM.render(
@@ -15,7 +16,8 @@ ReactDOM.render(
       <Fragment>
         <Route path="/" component={Nav} />
         <Route exact path="/" component={Home} />
-        <Route path="/results/:search/:page/:author?" render={(props) => <Results {...props} />}/> 
+        <Route path="/results/:search/:page/:author?" render={(props) => <Results {...props} />}/>
+        <Route path="/book/:id" render={(props) => <Book {...props} />}/>
       </Fragment>
 		</Router>
 	</Provider>,

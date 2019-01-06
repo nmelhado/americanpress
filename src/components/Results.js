@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import axios from 'axios';
 
 import ResultLine from './ResultLine';
@@ -13,7 +12,8 @@ class Results extends Component {
 			subjects: [],
 			subject: '',
 			authors: [],
-			author: ''
+      author: '',
+      infoLoaded: false
 		};
 		this.handleChange = this.handleChange.bind(this);
 	}
@@ -25,7 +25,6 @@ class Results extends Component {
 	}
 
 	componentDidMount() {
-    let fullList;
     const link = `http://openlibrary.org/search.json?${this.props.match.params.author && (this.props.match.params.author !== '' && this.props.match.params.author !== null) ? `author=${this.props.match.params.author}&title`: 'q' }=${this.props.match.params.search}`
     return axios
       .get(
@@ -35,10 +34,11 @@ class Results extends Component {
         total: res.data.num_found,
         books: res.data.docs
       }))
+      // This obtains a list of all authors and most common subjects for all results not just the fifteen queried above.  This will be used to filter results.
       .then(() => axios.get(`${link}&limit=9000`))
       .then(res => res.data.docs)
       .then( books => {let info = {subject: new Set}; books.filter(book => book.subject).forEach( book => book.subject.forEach( (subject, ix) => {if(ix < 5){info['subject'].add(subject)}})); if(this.props.match.params.author && (this.props.match.params.author !== '' && this.props.match.params.author !== null)){}else{info['authors'] = new Set(books.filter(book => book.author_name).map( book => book.author_name[0])) }; return info;})
-      .then( info => (this.props.match.params.author && (this.props.match.params.author !== '' && this.props.match.params.author !== null)) ? this.setState({subjects: info.subjects}) : this.setState({subjects: info.subjects, authors: info.authors}))
+      .then( info => (this.props.match.params.author && (this.props.match.params.author !== '' && this.props.match.params.author !== null)) ? this.setState({subjects: info.subjects}) : this.setState({subjects: info.subjects, authors: info.authors, infoLoaded: true}))
       .catch((error) => console.log(error));
   }
   
@@ -58,8 +58,8 @@ class Results extends Component {
   }
 
 	render() {
-    const { books, total, authors } = this.state;
-    console.log(authors)
+    const { books, total, authors, infoLoaded } = this.state;
+    console.log(infoLoaded)
 		return (
 			<div className="mainContent" id="resultContent">
         <div id="sideBar"></div>

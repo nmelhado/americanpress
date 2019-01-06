@@ -19,8 +19,8 @@ h1 {
 }
 
 #banner {
-  height: 100px;
-  margin: 50px auto 30px;
+  height: 120px;
+  margin: 40px auto 30px;
   left: 0;
   right: 0;
   display: block;
@@ -38,7 +38,7 @@ h1 {
   border-bottom: .5px solid #006fcf;
   box-shadow: 0 2px 6px 0 #c4ccd3;
   overflow: hidden;
-  background-color: white;
+  background-color: #006fcf;
 }
 
 #navLinks {
@@ -56,16 +56,16 @@ h1 {
 }
 
 #navLinks a {
-  color: #006fcf;
+  color: whitesmoke;
   text-decoration: none;
   padding: 8.5px 12px;
 }
 
 #navLinks a:hover {
-  color: #1068a5;
+  color: white;
   font-weight: 600;
   box-shadow: 0 0 8px -2px;
-  background-color: whitesmoke;
+  background-color: #1068a5;
 }
 
 #navSearch {
@@ -84,17 +84,16 @@ h1 {
 
 #navSearch button {
   padding: 4.5px 13px 1.5px 9px;
-  background-color: #006fcf;
+  background-color: whitesmoke;
   border: 0;
   border-radius: 0 15px 15px 0;
   cursor: pointer;
   vertical-align: top;
-  box-shadow: 0 0 0 0.5px #006fcf;
 }
 
 #navSearch button:hover {
-  background-color: #1068a5;
-  box-shadow: 0 0 0 .5px #1068a5;
+  background-color: #efefef;
+  box-shadow: 0 0 6px 0 #1068a5 inset;
 }
 
 #navSearch img {
