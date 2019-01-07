@@ -44,7 +44,7 @@ class Nav extends Component {
 		const { input } = this.state;
     return (
       <Fragment>
-        <Link to="/"><img id="banner" src="/banner.png" /></Link>
+        <Link to="/"><img id="banner" src="/banner.png" style={{ margin: this.state.atTop ? '40px auto 30px' : '40px auto 69px' }} /></Link>
         <div id="navBar" style={{ position: this.state.atTop ? 'relative' : 'fixed', top: 0 }}>
           <div id="navLinks">
             <Link to="/"><img src="/smallLogo_white.png" id="navLogo" />Home</Link>
