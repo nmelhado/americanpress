@@ -7,6 +7,24 @@ html {
   min-height: 100vh;
 }
 
+/* html scrollbar */
+
+html::-webkit-scrollbar {
+  width: 8px;
+}
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+html::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 4px;
+}
+html::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* end html scrollbar */
+
 body {
   margin: 0;
 }
@@ -237,6 +255,7 @@ h1 {
 
 #bookContent {
   background: url(shelfTile.jpg) repeat center center fixed;
+  padding-bottom: 80px;
 }
 
 #innerContent {
@@ -342,6 +361,62 @@ h1 {
   padding: 90px 40px;
   color: #006fcf;
 }
+
+.otherWorksParent {
+  background-color: #e0e0e0;
+  padding: 10px 0 30px;
+  width: 100%;
+  box-shadow: 0 0 20px 0 #aaa;
+}
+
+.otherWorksHeader {
+  text-align: center;
+  color: #69a2d4;
+  font-size: 1.4em;
+}
+
+.otherWorks {
+  justify-content: space-evenly;
+  width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.otherPreview {
+  height: 250px;
+  max-width: 190px;
+}
+
+.workContainer {
+  display: inline-block;
+  width: 230px;
+  height: 292px;
+  white-space: normal;
+  text-align: center;
+  margin: 10px 30px;
+  color: #1068a5;
+  text-decoration: none;
+  vertical-align: bottom;
+  overflow: hidden;
+}
+
+/* Other works scrollbar */
+
+.otherWorks::-webkit-scrollbar {
+  width: 8px;
+}
+.otherWorks::-webkit-scrollbar-track {
+  background: none;
+}
+.otherWorks::-webkit-scrollbar-thumb {
+  background: #006fcf;
+  border-radius: 4px;
+}
+.otherWorks::-webkit-scrollbar-thumb:hover {
+  background: #1068a5;
+}
+
+/* End other works scrolbar */
 
 /* End of /book styling */
 
