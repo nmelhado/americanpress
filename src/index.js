@@ -17,7 +17,7 @@ ReactDOM.render(
         <Route path="/" component={Nav} />
         <Route exact path="/" component={Home} />
         <Route path="/results/:search/:page/:author?" render={(props) => <Results {...props} />}/>
-        <Route path="/book/:id" render={(props) => <Book {...props} />}/>
+        <Route path="/book/:id/:cover?/:backup?" render={(props) => <Book {...props} />}/>
       </Fragment>
 		</Router>
 	</Provider>,
