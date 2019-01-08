@@ -24,141 +24,14 @@ class Book extends Component {
 	}
 
 	componentDidMount() {
-		return axios
-			.get(
-				`http://openlibrary.org/query.json?type=/type/edition&*=&limit=50&languages=/languages/eng&works=/works/${this
-					.props.match.params.id}`
-			)
-			.then((res) => {
-				let books = res.data.filter((book) => book.authors && book.description && book.subjects);
-				if (books.length > 0) {
-					return books.sort(function(a, b) {
-						return b.description.length - a.description.length;
-					});
-				} else {
-					books = res.data.filter((book) => book.description && book.subjects);
-				}
-				if (books.length > 0) {
-					return books.sort(function(a, b) {
-						return b.description.length - a.description.length;
-					});
-				} else {
-					books = res.data.filter((book) => book.description);
-				}
-				if (books.length > 0) {
-					return books.sort(function(a, b) {
-						return b.description.length - a.description.length;
-					});
-				} else {
-					books = res.data.filter((book) => book.authors);
-				}
-				return res.data;
-			})
-			.then((books) => {
-				console.log(books);
-				if (books[0]) {
-					return books[0];
-				}
-				return { title: '', authors: [] };
-			})
-			.then((work) => {
-				const book = { title: work.title };
-				book['key'] = work.key ? work.key.split('books/')[1] : '';
-				book['cover'] = this.props.match.params.cover
-					? `https://covers.openlibrary.org/b/ID/${this.props.match.params.cover}-L.jpg`
-					: '/nia.jpg';
-				if (work.identifiers && work.identifiers['amazon.co.uk_asin']) {
-					book['amazon'] = work.identifiers['amazon.co.uk_asin'][0];
-				}
-				if (work.identifiers && work.identifiers['goodreads']) {
-					book['goodreads'] = work.identifiers['goodreads'][0];
-				}
-				if (work.physical_format) {
-					book['format'] = work.physical_format;
-				}
-				if (work.publish_date) {
-					book['published'] = work.publish_date;
-				}
-				if (work.number_of_pages) {
-					book['pages'] = work.number_of_pages;
-				}
-				if (work.subjects) {
-					book['subjects'] = work.subjects;
-				}
-				if (work.authors && work.authors[0]) {
-					book['authorKey'] = work.authors[0].key;
-				}
-				if (work.description) {
-					book['description'] = work.description;
-				} else {
-					book['description'] = 'No description available.';
-				}
-				return book;
-			})
-			.then((book) => this.setState({ ...book }))
-			.then(() => {
-				if (this.state.authors.length === 0) {
-					return axios.get(
-						`https://openlibrary.org/api/books?bibkeys=${this.state.key
-							? this.state.key
-							: this.props.match.params.backup
-								? this.props.match.params.backup
-								: ''}&format=json&jscmd=data`
-					);
-				} else {
-					const empty = { data: {} };
-					empty.data[this.props.match.params.backup] = {};
-					return empty;
-				}
-			})
-			.then(
-				(res) =>
-					this.state.authors.length === 0 && (this.state.key || this.props.match.params.backup)
-						? res.data[this.state.key ? this.state.key : this.props.match.params.backup]
-						: {}
-			)
-			.then((book) => (this.state.authors.length === 0 ? (book.authors ? book.authors : []) : null))
-			.then((authors) => {
-				if (this.state.authors.length === 0) {
-					let authorKey = '';
-					if (authors[0].url) {
-						authorKey = `/authors/${authors[0].url.split('authors/')[1].split('/')[0]}`;
-					}
-					this.setState({ authors, authorKey });
-				}
-			})
-			.then(() => {
-				if (this.state.authorKey !== '') {
-					this.otherWorks();
-				}
-			})
-			.catch((error) => console.log(error));
-	}
-
-	componentDidUpdate(prevProps) {
-		if (prevProps.match.params !== this.props.match.params) {
-			this.setState({
-				title: '',
-				description: '',
-				authors: [],
-				subjects: [],
-				format: '',
-				published: '',
-				pages: 0,
-				amazon: '',
-				goodreads: '',
-				cover: '',
-				key: '',
-				authorKey: '',
-				otherWorks: []
-			});
-			window.scrollTo(0, 0);
-			return axios
+		return (
+			axios
 				.get(
 					`http://openlibrary.org/query.json?type=/type/edition&*=&limit=50&languages=/languages/eng&works=/works/${this
 						.props.match.params.id}`
 				)
 				.then((res) => {
+					// the api call typically returns many versions of the same book.  The following chain of filters attempts to isolate results that have as much info as possible.
 					let books = res.data.filter((book) => book.authors && book.description && book.subjects);
 					if (books.length > 0) {
 						return books.sort(function(a, b) {
@@ -184,7 +57,6 @@ class Book extends Component {
 					return res.data;
 				})
 				.then((books) => {
-					console.log(books);
 					if (books[0]) {
 						return books[0];
 					}
@@ -193,15 +65,19 @@ class Book extends Component {
 				.then((work) => {
 					const book = { title: work.title };
 					book['key'] = work.key ? work.key.split('books/')[1] : '';
+					// choose cover based on search result cover, NOT specific work selected above
 					book['cover'] = this.props.match.params.cover
 						? `https://covers.openlibrary.org/b/ID/${this.props.match.params.cover}-L.jpg`
 						: '/nia.jpg';
+					// used to create an amazon link to he book
 					if (work.identifiers && work.identifiers['amazon.co.uk_asin']) {
 						book['amazon'] = work.identifiers['amazon.co.uk_asin'][0];
 					}
+					// used to create a goodreads link to he book
 					if (work.identifiers && work.identifiers['goodreads']) {
 						book['goodreads'] = work.identifiers['goodreads'][0];
 					}
+					// Check if the format is harcover, paperback, massmarket, etc.
 					if (work.physical_format) {
 						book['format'] = work.physical_format;
 					}
@@ -215,6 +91,7 @@ class Book extends Component {
 						book['subjects'] = work.subjects;
 					}
 					if (work.authors && work.authors[0]) {
+						// author key is used to pull up other works by the same author
 						book['authorKey'] = work.authors[0].key;
 					}
 					if (work.description) {
@@ -225,48 +102,178 @@ class Book extends Component {
 					return book;
 				})
 				.then((book) => this.setState({ ...book }))
+				// following API call returns the authors (due to the fact that the above API call does not return author names)
 				.then(() => {
-					if (this.state.authors.length === 0) {
-						return axios.get(
-							`https://openlibrary.org/api/books?bibkeys=${this.state.key
-								? this.state.key
-								: this.props.match.params.backup
-									? this.props.match.params.backup
-									: ''}&format=json&jscmd=data`
-						);
-					} else {
-						const empty = { data: {} };
-						empty.data[this.props.match.params.backup] = {};
-						return empty;
-					}
+					return axios.get(
+						`https://openlibrary.org/api/books?bibkeys=${this.state.key
+							? this.state.key
+							: this.props.match.params.backup
+								? this.props.match.params.backup
+								: ''}&format=json&jscmd=data`
+					);
 				})
 				.then(
 					(res) =>
-						this.state.authors.length === 0 && (this.state.key || this.props.match.params.backup)
+						// if you have no work key and there is no backup ientifier provided, return an empty object so that the following script passes
+						this.state.key || this.props.match.params.backup
 							? res.data[this.state.key ? this.state.key : this.props.match.params.backup]
 							: {}
 				)
-				.then((book) => (this.state.authors.length === 0 ? (book.authors ? book.authors : []) : null))
+				// if there is no authors key on the object, retun empty array
+				.then((book) => (book.authors ? book.authors : []))
 				.then((authors) => {
-					if (this.state.authors.length === 0) {
-						let authorKey = '';
-						if (authors[0].url) {
-							authorKey = `/authors/${authors[0].url.split('authors/')[1].split('/')[0]}`;
-						}
-						this.setState({ authors, authorKey });
+					let authorKey = '';
+					if (authors[0].url) {
+						authorKey = `/authors/${authors[0].url.split('authors/')[1].split('/')[0]}`;
 					}
+					this.setState({ authors, authorKey });
 				})
 				.then(() => {
+          // if you obtained an author key, look for other works by that author
 					if (this.state.authorKey !== '') {
 						this.otherWorks();
 					}
 				})
-				.catch((error) => console.log(error));
-		}
+				.catch((error) => console.log(error))
+		);
+	}
+
+	componentDidUpdate(prevProps) {
+		if (prevProps.match.params !== this.props.match.params) {
+			this.setState({
+				title: '',
+				description: '',
+				authors: [],
+				subjects: [],
+				format: '',
+				published: '',
+				pages: 0,
+				amazon: '',
+				goodreads: '',
+				cover: '',
+				key: '',
+				authorKey: '',
+				otherWorks: []
+			});
+			window.scrollTo(0, 0);
+			return (
+        axios
+          .get(
+            `http://openlibrary.org/query.json?type=/type/edition&*=&limit=50&languages=/languages/eng&works=/works/${this
+              .props.match.params.id}`
+          )
+          .then((res) => {
+            // the api call typically returns many versions of the same book.  The following chain of filters attempts to isolate results that have as much info as possible.
+            let books = res.data.filter((book) => book.authors && book.description && book.subjects);
+            if (books.length > 0) {
+              return books.sort(function(a, b) {
+                return b.description.length - a.description.length;
+              });
+            } else {
+              books = res.data.filter((book) => book.description && book.subjects);
+            }
+            if (books.length > 0) {
+              return books.sort(function(a, b) {
+                return b.description.length - a.description.length;
+              });
+            } else {
+              books = res.data.filter((book) => book.description);
+            }
+            if (books.length > 0) {
+              return books.sort(function(a, b) {
+                return b.description.length - a.description.length;
+              });
+            } else {
+              books = res.data.filter((book) => book.authors);
+            }
+            return res.data;
+          })
+          .then((books) => {
+            if (books[0]) {
+              return books[0];
+            }
+            return { title: '', authors: [] };
+          })
+          .then((work) => {
+            const book = { title: work.title };
+            book['key'] = work.key ? work.key.split('books/')[1] : '';
+            // choose cover based on search result cover, NOT specific work selected above
+            book['cover'] = this.props.match.params.cover
+              ? `https://covers.openlibrary.org/b/ID/${this.props.match.params.cover}-L.jpg`
+              : '/nia.jpg';
+            // used to create an amazon link to he book
+            if (work.identifiers && work.identifiers['amazon.co.uk_asin']) {
+              book['amazon'] = work.identifiers['amazon.co.uk_asin'][0];
+            }
+            // used to create a goodreads link to he book
+            if (work.identifiers && work.identifiers['goodreads']) {
+              book['goodreads'] = work.identifiers['goodreads'][0];
+            }
+            // Check if the format is harcover, paperback, massmarket, etc.
+            if (work.physical_format) {
+              book['format'] = work.physical_format;
+            }
+            if (work.publish_date) {
+              book['published'] = work.publish_date;
+            }
+            if (work.number_of_pages) {
+              book['pages'] = work.number_of_pages;
+            }
+            if (work.subjects) {
+              book['subjects'] = work.subjects;
+            }
+            if (work.authors && work.authors[0]) {
+              // author key is used to pull up other works by the same author
+              book['authorKey'] = work.authors[0].key;
+            }
+            if (work.description) {
+              book['description'] = work.description;
+            } else {
+              book['description'] = 'No description available.';
+            }
+            return book;
+          })
+          .then((book) => this.setState({ ...book }))
+          // following API call returns the authors (due to the fact that the above API call does not return author names)
+          .then(() => {
+            return axios.get(
+              `https://openlibrary.org/api/books?bibkeys=${this.state.key
+                ? this.state.key
+                : this.props.match.params.backup
+                  ? this.props.match.params.backup
+                  : ''}&format=json&jscmd=data`
+            );
+          })
+          .then(
+            (res) =>
+              // if you have no work key and there is no backup ientifier provided, return an empty object so that the following script passes
+              this.state.key || this.props.match.params.backup
+                ? res.data[this.state.key ? this.state.key : this.props.match.params.backup]
+                : {}
+          )
+          // if there is no authors key on the object, retun empty array
+          .then((book) => (book.authors ? book.authors : []))
+          .then((authors) => {
+            let authorKey = '';
+            if (authors[0].url) {
+              authorKey = `/authors/${authors[0].url.split('authors/')[1].split('/')[0]}`;
+            }
+            this.setState({ authors, authorKey });
+          })
+          .then(() => {
+            // if you obtained an author key, look for other works by that author
+            if (this.state.authorKey !== '') {
+              this.otherWorks();
+            }
+          })
+          .catch((error) => console.log(error))
+      )
+    }
 	}
 
 	otherWorks() {
-		return axios
+    return axios
+      // Search for other works by the author and, like above, filter the results to attempt to get results with lots of info
 			.get(
 				`http://openlibrary.org/query.json?type=/type/edition&*=&limit=80&languages=/languages/eng&authors=${this
 					.state.authorKey}`
@@ -327,12 +334,12 @@ class Book extends Component {
 			cover,
 			otherWorks
 		} = this.state;
-		console.log(this.state);
 		if (title !== '') {
 			return (
 				<div className="mainContent" id="bookContent">
 					<div id="innerContent">
 						<div id="topContent">
+            {/* topContet contains cover, title, author(s), publication date, subjects, pages, format, and external links to amazon and goodreads */}
 							<div id="bookDisplay">
 								<img
 									id="bookTransformer"
@@ -410,6 +417,7 @@ class Book extends Component {
 						)}
 					</div>
 					{otherWorks.length > 0 ? (
+            // other works provides a horizontaly scrolling list of other works by the author
 						<div className="otherWorksParent">
 							<h3 className="otherWorksHeader">{`Other Works by ${authors[0].name}:`}</h3>
 							<div className="otherWorks">
@@ -438,6 +446,7 @@ class Book extends Component {
 			return (
 				<div className="mainContent" id="mainLoading">
 					{cover !== '' ? (
+            // Some books have no info and so this message is provided as an explination (instead of showing a blank page).  It is triggered when this.state.cover (this happens no matter what) changes and no title is given
 						<h2 id="noContent">
 							We're sorry, but there's no data available for this book!<br />
 							<br />It may be linked to a different OpenLibrary book, if there are other results by the
@@ -449,6 +458,7 @@ class Book extends Component {
 					)}
 					{cover === '' ? (
 						<div id="centerBlock">
+              {/* Loading image while the info is retrieved from the API call */}
 							<div className="loading-grid">
 								<div />
 								<div />
