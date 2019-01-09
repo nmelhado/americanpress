@@ -5,9 +5,9 @@ const path = require('path');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use('/scripts', express.static(path.join(__dirname, '..', 'dist')));
-app.use(express.static(path.join(__dirname, '..', 'public')));
-app.use('/favicons', express.static(path.join(__dirname, '..', 'public/favicons')));
+app.use('/scripts', express.static(path.join(__dirname, '../', 'dist')));
+app.use(express.static(path.join(__dirname, '../', 'public')));
+app.use('/favicons', express.static(path.join(__dirname, '../', 'public/favicons')));
 
 app.get('/*', (req, res, next) => {
   res.sendFile(path.join(__dirname, '..', 'public/index.html'));
