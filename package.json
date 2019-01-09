@@ -33,6 +33,7 @@
     "webpack-cli": "^3.1.0"
   },
   "scripts": {
+    "start": "npm run webpack --mode=production & nodemon server.js --ignore src/ --ignore dist",
     "postinstall": "npm run webpack",
     "webpack": "./node_modules/webpack/bin/webpack.js",
     "start:dev": "npm run webpack -- --watch --mode=development & nodemon server.js --ignore src/ --ignore dist"
