@@ -61,6 +61,18 @@ h1 {
 	z-index: 50;
 }
 
+#menuIcon {
+  display: none;
+  height: 34px;
+  padding: 2px;
+  cursor: pointer;
+}
+
+#menuSpacer {
+  display: none;
+  width: 70%;
+}
+
 #navLinks {
 	display: inline-flex;
 	justify-content: space-around;
@@ -123,6 +135,27 @@ h1 {
 #navSearch input:focus {
 	border: .5px solid #1068a5;
 	box-shadow: 0 0 0 .5px #1068a5;
+}
+
+#expandedOptions {
+  z-index: 53;
+  width: 100%;
+}
+
+#expandedOptions a {
+  display: block;
+  background-color: whitesmoke;
+  color: #006fcf;
+  font-size: 1.4em;
+  padding: 8px 0;
+  text-align: center;
+  text-decoration: none;
+  border-bottom: 1px solid #006fcf;
+}
+
+#expandedOptions a:hover {
+  background-color: #1068a5;
+  color: whitesmoke;
 }
 
 .mainContent {
@@ -188,29 +221,97 @@ h1 {
 
 /* Start results sidebar styling */
 
+#expandFilter {
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  color: whitesmoke;
+  font-weight: 600;
+  background-color: #69a2d4;
+  width: 170px;
+  padding: 5px 0;
+  z-index: 49;
+}
+
+.expandBottom {
+  bottom: 0;
+  border-radius: 20px 20px 0 0;
+  border: 1.5px solid #1068a5;
+  border-bottom: none;
+}
+
+.expandTop {
+  top: 0;
+  border-radius: 0 0 20px 20px;
+  border: 1.5px solid #1068a5;
+  border-top: none;
+}
+
+.expandFixed {
+  top: 39px;
+  border-radius: 0 0 20px 20px;
+  border: 1.5px solid #1068a5;
+  border-top: none;
+}
+
+#expandFilter img {
+  height: 25px;
+  vertical-align: text-bottom;
+  padding: 0 15px;
+}
+
 #sideBar {
-  width: 250px;
-  max-width: 30%;
-  height: calc(100vh - 79px);
-  background-color: #eee;
-  float: left;
-  padding: 20px 0;
-  box-shadow: 0 0 20px 0 #ccc;
-  overflow-y: auto;
+	width: 250px;
+	height: calc(100vh - 79px);
+	background-color: whitesmoke;
+	float: left;
+	padding: 20px 0;
+	box-shadow: 0 0 20px 0 #ccc;
+	overflow-y: auto;
+}
+
+.sidebarHeading {
+	text-align: center;
+	color: #1068a5;
 }
 
 .sidebarSelectBox {
-  height: 35%;
-  overflow-y: auto;
+	height: calc(100% - 143px);
+	overflow-y: auto;
 }
 
 .sidebarSelectBox a {
-  display: block;
-  color: #1068a5;
-  text-decoration: none;
-  padding: 8px 4px;
-  background-color: #f3f6fd;
-  border-bottom: .5px solid #bbb;
+	display: block;
+	color: #1068a5;
+	text-decoration: none;
+	padding: 8px 4px;
+	background-color: #f3f6fd;
+	border-bottom: .5px solid #bbb;
+}
+
+.selectAuthor {
+	margin: 8px 8px 30px;
+}
+
+.selectAuthor div .css-1wy0on6 {
+	display: none;
+}
+
+.selectAuthor div .css-1hwfws3 .css-1492t68 {
+	font-style: italic;
+	white-space: nowrap;
+	font-size: 0.75em;
+}
+
+.selectAuthor div .css-1hwfws3 .css-1g6gooi {
+	color: #1068a5;
+}
+
+.timeWarning {
+	display: block;
+	color: #69a2d4;
+  margin: 40px 30px;
+  text-align: center;
 }
 
 /* sidebar scrollbar */
@@ -230,6 +331,89 @@ h1 {
 }
 
 /* end sidebar scrollbar */
+
+#resultContent {
+  position: relative;
+}
+
+#searchBriefing {
+  position: relative;
+  text-align: center;
+  background-color: #eee;
+  padding: 15px 0 5px;
+  color: #666;
+  font-size: 1.1em;
+  box-shadow: 0 0 20px 0 #aaa;
+  z-index: 2;
+}
+
+#briefingParams {
+  display: inline-block;
+  max-width: 480px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#briefingInfo {
+  margin: 10px 0;
+  display: block;
+  font-size: .9em;
+  color: #888;
+}
+
+.pnButtonTop {
+  position: absolute;
+  top: 20px;
+  color: #666;
+  text-decoration: none;
+  padding: 7px 12px;
+  border: .5px solid #666;
+  background-color: whitesmoke;
+}
+
+.pnButtonTop:hover {
+  color: #1068a5;
+  border: .5px solid #1068a5;
+  background-color: #f3f6fd;
+  box-shadow: 0 0 4px 0 #1068a5 inset;
+}
+
+.pnButtonBottom {
+  color: #666;
+  text-decoration: none;
+  padding: 7px 12px;
+  border: .5px solid #666;
+  background-color: whitesmoke;
+}
+
+.pnButtonBottom:hover {
+  color: #1068a5;
+  border: .5px solid #1068a5;
+  background-color: #f3f6fd;
+  box-shadow: 0 0 4px 0 #1068a5 inset;
+}
+
+.nextBottom {
+  margin-left: 20px;
+}
+
+.previousBottom {
+  margin-right: 20px;
+}
+
+.nextTop {
+  right: 20px;
+}
+
+.previousTop {
+  left: 20px;
+}
+
+#results {
+	overflow-x: hidden;
+}
 
 .resultLine {
 	display: grid;
@@ -253,6 +437,7 @@ h1 {
 	grid-area: title;
 	font-size: 2em;
 	padding: 30px 0 0 0;
+  overflow-y: hidden;
 }
 
 .previewTitle a {
@@ -262,6 +447,7 @@ h1 {
 
 .previewAuthor {
 	grid-area: authors;
+  overflow-y: hidden;
 }
 
 .previewAmazon {
@@ -270,6 +456,7 @@ h1 {
 
 .previewSubjects {
 	grid-area: subjects;
+	overflow-y: hidden;
 }
 
 .previewDate {
@@ -463,6 +650,7 @@ h1 {
 /* End of /book styling */
 
 footer {
+  position: relative;
 	width: 100%;
 	text-align: center;
 	padding: 20px 0 50px;
@@ -473,8 +661,39 @@ footer {
 }
 
 footer a {
-	color: #1068a5;
+  color: #1068a5;
 }
+
+/* Start pagination */
+
+.pages {
+  padding: 15px 0;
+  text-align: center;
+}
+
+.pageNumbers {
+  color: whitesmoke;
+  background-color: #1068a5;
+  text-decoration: none;
+  border-radius: 3px;
+  padding: 6px;
+  margin: 0 2px;
+  font-size: 1.1em;
+}
+.disabledNumber {
+  display: inline-block;
+  color: #1068a5;
+  background-color: whitesmoke;
+  cursor: default;
+}
+
+.dots {
+  font-weight: 600;
+  letter-spacing: 6px;
+  vertical-align: bottom;
+}
+
+/* End pagination */
 
 /* Loading Squares */
 
@@ -492,7 +711,7 @@ footer a {
 }
 
 .smallLoading {
-  margin: 25% 85px 0;
+	margin: 25% calc(50% - 40px) 0;
 }
 
 .loading-grid {
@@ -590,5 +809,29 @@ footer a {
 		padding: 10px;
 		border-bottom: .5px solid #aaa;
 		background-color: #fefefe;
-	}
+  }
+  .pnButtonBottom {
+    display: none;
+  }
 }
+@media only screen and (max-device-width: 600px) {
+  .pnButtonTop {
+    display: none;
+  }
+}
+@media only screen and (max-device-width: 766px) {
+  #navLinks a {
+    display: none;
+  }
+  #menuIcon {
+    display: inline-block;
+    height: 34px;
+    padding: 2px;
+    cursor: pointer;
+  }
+  #menuSpacer {
+    display: inline-block;
+    width: 70%;
+  }
+}
+

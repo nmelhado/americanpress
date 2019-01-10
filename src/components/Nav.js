@@ -7,10 +7,12 @@ class Nav extends Component {
 		this.state = {
 			input: '',
 			// atTop will be used to make the navbar sticky if the user scrolls down far enough(far enough to place the navbar at the top of the page)
-			atTop: true
+      atTop: true,
+      expanded: false
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSearch = this.handleSearch.bind(this);
+		this.expand = this.expand.bind(this);
 	}
 
 	componentDidMount() {
@@ -22,10 +24,24 @@ class Nav extends Component {
 			}
 		});
 	}
+  
+  componentDidUpdate(prevProps) {
+    if (this.props.location !== prevProps.location) {
+      this.setState({
+        expanded: false
+      });
+    }
+  }
 
 	handleChange(e) {
 		this.setState({
 			input: e.target.value
+		});
+	}
+
+	expand() {
+		this.setState({
+			expanded: !this.state.expanded
 		});
 	}
 
@@ -42,8 +58,8 @@ class Nav extends Component {
 	}
 
 	render() {
-		const { handleSearch, handleChange } = this;
-		const { input } = this.state;
+		const { handleSearch, handleChange, expand } = this;
+		const { input, expanded } = this.state;
 		return (
 			<Fragment>
 				{/* Add margin to the bottom of the banner to accomodate the navbar becoming fixed and no longer bumping content down */}
@@ -57,12 +73,14 @@ class Nav extends Component {
 				{/* navbar becomes sticky */}
 				<div id="navBar" style={{ position: this.state.atTop ? 'relative' : 'fixed', top: 0 }}>
 					<div id="navLinks">
+            <img src="/menu.png" id="menuIcon" onClick={expand} />
+            <div id="menuSpacer"></div>
 						<Link to="/">
 							<img src="/smallLogo_white.png" id="navLogo" />Home
 						</Link>
+						<Link to="/title">Search by Title</Link>
+						<Link to="/author">Search by Author</Link>
 						<Link to="/subjects">Browse by Subject</Link>
-						<Link to="/dummy1">Dummy 1</Link>
-						<Link to="/dummy2">Dummy 2</Link>
 					</div>
 					<form onSubmit={handleSearch} id="navSearch">
 						<input placeholder="Search for a book..." onChange={handleChange} value={input} />
@@ -71,6 +89,21 @@ class Nav extends Component {
 						</button>
 					</form>
 				</div>
+        {/* Display the following if the sandwich menu has been expanded */}
+        {expanded ?
+        <Fragment>
+          {/* closeMenu is a fixed div that is directy behind the men and ollapses the menu when someone clicks outside of the menu. */}
+          <div id="closeMenu" onClick={expand} />
+          <div id="expandedOptions" style={{ position: this.state.atTop ? 'absolute' : 'fixed', top: this.state.atTop ? '229px' : '39px' }}>
+            <Link to="/">
+              <img src="/smallLogo.png" id="navLogo" />Home
+            </Link>
+            <Link to="/title">Search by Title</Link>
+            <Link to="/author">Search by Author</Link>
+            <Link to="/subjects">Browse by Subject</Link>
+          </div>
+        </Fragment>
+        : ''}
 			</Fragment>
 		);
 	}
