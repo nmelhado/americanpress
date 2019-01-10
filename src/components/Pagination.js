@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default ({ total, page, search, author }) => {
-	console.log(`Search: ${search}, Author: ${author}`);
+export default ({ total, page, search, author, title, subject }) => {
 	const paginate = () => {
 		let start = 0;
 		let end = 0;
@@ -22,7 +21,13 @@ export default ({ total, page, search, author }) => {
 		let pages = [];
 		if (start > 1) {
 			pages.push(
-				<Link to={`/results/${search}/1${author ? `/${author}` : ''}`} key="a" className="pageNumbers">
+				<Link
+					to={`/results/${search ? `?search=${search}` : ''}${author ? `?author=${author}` : ''}${title
+						? `${author ? '&' : '?'}title=${title}`
+						: ''}${subject ? `?subject=${subject}` : ''}&page=1`}
+					key="a"
+					className="pageNumbers"
+				>
 					1
 				</Link>
 			);
@@ -45,7 +50,11 @@ export default ({ total, page, search, author }) => {
 				pages.push(
 					<Link
 						key={start}
-						to={`/results/${search}/${start}${author ? `/${author}` : ''}`}
+						to={`/results/${search ? `?search=${search}` : ''}${author
+							? `?author=${author}`
+							: ''}${title ? `${author ? '&' : '?'}title=${title}` : ''}${subject
+							? `?subject=${subject}`
+							: ''}&page=${start}${author ? `&author=${author}` : ''}`}
 						className="pageNumbers"
 					>
 						{start}
@@ -63,7 +72,11 @@ export default ({ total, page, search, author }) => {
 			}
 			pages.push(
 				<Link
-					to={`/results/${search}/${maxPages}${author ? `/${author}` : ''}`}
+					to={`/results/${search ? `?search=${search}` : ''}${author ? `?author=${author}` : ''}${title
+						? `${author ? '&' : '?'}title=${title}`
+						: ''}${subject ? `?subject=${subject}` : ''}&page=${maxPages}${author
+						? `&author=${author}`
+						: ''}`}
 					key="b"
 					className="pageNumbers"
 				>
@@ -75,21 +88,25 @@ export default ({ total, page, search, author }) => {
 	};
 	return (
 		<div className="pages">
-      {page > 1 ? (
-        <Link
-          className="pnButtonBottom previousBottom"
-          to={`/results/${search}/${page * 1 - 1}${author ? `/${author}` : ''}`}
-        >
-          Previous Page
-        </Link>
-      ) : (
-        ''
-      )}
+			{page > 1 ? (
+				<Link
+					className="pnButtonBottom previousBottom"
+					to={`/results/${search ? `?search=${search}` : ''}${author ? `?author=${author}` : ''}${title
+						? `${author ? '&' : '?'}title=${title}`
+						: ''}${subject ? `?subject=${subject}` : ''}&page=${page * 1 - 1}${author ? `&author=${author}` : ''}`}
+				>
+					Previous Page
+				</Link>
+			) : (
+				''
+			)}
 			{paginate()}
 			{page * 15 < total ? (
 				<Link
 					className="pnButtonBottom nextBottom"
-					to={`/results/${search}/${page * 1 + 1}${author ? `/${author}` : ''}`}
+					to={`/results/${search ? `?search=${search}` : ''}${author ? `?author=${author}` : ''}${title
+						? `${author ? '&' : '?'}title=${title}`
+						: ''}${subject ? `?subject=${subject}` : ''}&page=${page * 1 + 1}${author ? `&author=${author}` : ''}`}
 				>
 					Next Page
 				</Link>

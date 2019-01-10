@@ -1,10 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import Select from 'react-select';
+import * as qs from 'query-string';
 
 import ResultLine from './ResultLine';
 import Pagination from './Pagination';
+import { browseQuery, pullAuthorsQuery, browseSubject } from '../utils';
 
 class Results extends Component {
 	constructor() {
@@ -31,66 +32,37 @@ class Results extends Component {
 	}
 
 	handleChange(selectedOption) {
-		this.props.history.push(`/results/${this.props.match.params.search}/1/${selectedOption.value}`);
+		this.props.history.push(
+			`/results/?title=${qs.parse(this.props.location.search).search}&page=1&author=${selectedOption.value}`
+		);
 	}
 
 	componentDidMount() {
+		const { search, author, title, subject, page } = qs.parse(this.props.location.search);
 		// make filter bar (and, on small screens, the expand button) sticky when scrolling further than 190px
 		window.addEventListener('scroll', this.updateScrollPosition);
 		// rearranges certain elements if the screen isn't wide enough to display thijngs comfortably
 		window.addEventListener('resize', this.updateWindowDimensions);
 		this.updateWindowDimensions();
 		// treat the main search parameter as a general query, unless an author is provoded, in which case treat it as a tite search
-		const link = `http://openlibrary.org/search.json?${this.props.match.params.author &&
-		(this.props.match.params.author !== '' && this.props.match.params.author !== null)
-			? `author=${this.props.match.params.author}&title`
-			: 'q'}=${this.props.match.params.search}`;
-		return (
-			axios
-				// return 15 results at a time
-				.get(`${link}&page=${this.props.match.params.page}&limit=15`)
-				.then((res) =>
-					this.setState({
-						total: res.data.num_found,
-						books: res.data.docs
-					})
-				)
-				// This obtains a list of all* (*the first 9,000) authors and most common subjects for all results not just the fifteen queried above.  This will be used to filter results.
-				.then(() => axios.get(`${link}&limit=9000`))
-				.then((res) => res.data.docs)
-				.then((books) => {
-					// Haven't determined if subjects can be used to filter search API, haven't found a way yet.  Still pulling them in case it's possible.
-					let info = { subject: new Set() };
-					books.filter((book) => book.subject).forEach((book) =>
-						book.subject.forEach((subject, ix) => {
-							if (ix < 5) {
-								info['subject'].add(subject);
-							}
-						})
-					);
-					if (
-						this.props.match.params.author &&
-						(this.props.match.params.author !== '' && this.props.match.params.author !== null)
-					) {
-					} else {
-						info['authors'] = new Set(
-							books.filter((book) => book.author_name).map((book) => book.author_name[0])
-						);
-						const authors = [];
-						info['authors'].forEach((author) => authors.push({ label: author, value: author }));
-						info['authors'] = authors;
-					}
-					return info;
-				})
-				.then(
-					(info) =>
-						this.props.match.params.author &&
-						(this.props.match.params.author !== '' && this.props.match.params.author !== null)
-							? this.setState({ subjects: info.subjects })
-							: this.setState({ subjects: info.subjects, authors: info.authors, infoLoaded: true })
-				)
-				.catch((error) => console.log(error))
-		);
+		return (!subject ? browseQuery(author, search, title, page) : browseSubject(subject, page))
+			.then((results) => this.setState({ ...results }))
+			.then(() => {
+				return !subject ? pullAuthorsQuery(author, search, title) : null;
+			})
+			.then(
+				(results) =>
+					results
+						? author && author !== '' && author !== null
+							? this.setState({ subjects: results.subjects })
+							: this.setState({
+									subjects: results.subjects,
+									authors: results.authors,
+									infoLoaded: true
+								})
+						: null
+			)
+			.catch((error) => console.log(error));
 	}
 
 	componentDidUpdate(prevProps) {
@@ -105,59 +77,27 @@ class Results extends Component {
 				infoLoaded: false,
 				atTop: true,
 				selectedOption: null,
-				narrow: false,
 				expanded: false
 			});
-			// treat the main search parameter as a general query, unless an author is provoded, in which case treat it as a tite search
-			const link = `http://openlibrary.org/search.json?${this.props.match.params.author &&
-			(this.props.match.params.author !== '' && this.props.match.params.author !== null)
-				? `author=${this.props.match.params.author}&title`
-				: 'q'}=${this.props.match.params.search}`;
-			return (
-				axios
-					.get(`${link}&page=${this.props.match.params.page}&limit=15`)
-					.then((res) =>
-						this.setState({
-							total: res.data.num_found,
-							books: res.data.docs
-						})
-					)
-					// This obtains a list of all authors and most common subjects for all results not just the fifteen queried above.  This will be used to filter results.
-					.then(() => axios.get(`${link}&limit=9000`))
-					.then((res) => res.data.docs)
-					.then((books) => {
-						// Haven't determined if subjects can be used to filter search API, haven't found a way yet.  Still pulling them in case it's possible.
-						let info = { subject: new Set() };
-						books.filter((book) => book.subject).forEach((book) =>
-							book.subject.forEach((subject, ix) => {
-								if (ix < 5) {
-									info['subject'].add(subject);
-								}
-							})
-						);
-						if (
-							this.props.match.params.author &&
-							(this.props.match.params.author !== '' && this.props.match.params.author !== null)
-						) {
-						} else {
-							info['authors'] = new Set(
-								books.filter((book) => book.author_name).map((book) => book.author_name[0])
-							);
-							const authors = [];
-							info['authors'].forEach((author) => authors.push({ label: author, value: author }));
-							info['authors'] = authors;
-						}
-						return info;
-					})
-					.then(
-						(info) =>
-							this.props.match.params.author &&
-							(this.props.match.params.author !== '' && this.props.match.params.author !== null)
-								? this.setState({ subjects: info.subjects })
-								: this.setState({ subjects: info.subjects, authors: info.authors, infoLoaded: true })
-					)
-					.catch((error) => console.log(error))
-			);
+			const { search, author, title, subject, page } = qs.parse(this.props.location.search);
+			return (!subject ? browseQuery(author, search, title, page) : browseSubject(subject, page))
+				.then((results) => this.setState({ ...results }))
+				.then(() => {
+					return !subject ? pullAuthorsQuery(author, search, title) : null;
+				})
+				.then(
+					(results) =>
+						results
+							? author && author !== '' && author !== null
+								? this.setState({ subjects: results.subjects })
+								: this.setState({
+										subjects: results.subjects,
+										authors: results.authors,
+										infoLoaded: true
+									})
+							: null
+				)
+				.catch((error) => console.log(error));
 		}
 	}
 
@@ -188,7 +128,9 @@ class Results extends Component {
 			return (
 				<div className="mainContent" id="resultContent">
 					{/* render an expand button if no authr has been provoded and the screen is narrow */}
-					{!this.props.match.params.author && narrow ? (
+					{!qs.parse(this.props.location.search).author &&
+					narrow &&
+					!qs.parse(this.props.location.search).subject ? (
 						<div
 							style={{
 								position: atTop && !expanded ? 'absolute' : 'fixed'
@@ -205,7 +147,9 @@ class Results extends Component {
 						''
 					)}
 					{/* render the filter side panel if no author has already been provided AND the screen either isn't too narrow or has been expanded  */}
-					{!this.props.match.params.author && (!narrow || expanded) ? (
+					{!qs.parse(this.props.location.search).author &&
+					(!narrow || expanded) &&
+					!qs.parse(this.props.location.search).subject ? (
 						<div
 							id="sideBar"
 							// Make the sidebar sticky if the user has scrolled a certain distance
@@ -233,7 +177,8 @@ class Results extends Component {
 										return (
 											<Link
 												key={key}
-												to={`/results/${this.props.match.params.search}/1/${author.label}`}
+												to={`/results/?title=${qs.parse(this.props.location.search)
+													.search}&page=1&author=${author.label}`}
 											>
 												{author.label}
 											</Link>
@@ -267,36 +212,66 @@ class Results extends Component {
 						id="results"
 						// add a margin if the sidebar becomes sticky, otherwise they will overlap
 						style={{
-							marginLeft: atTop || this.props.match.params.author || narrow ? '0' : '250px'
+							marginLeft:
+								atTop ||
+								qs.parse(this.props.location.search).author ||
+								narrow ||
+								qs.parse(this.props.location.search).subject
+									? '0'
+									: '250px'
 						}}
 					>
 						<div
 							// info on the current search parameters (title, author) as well as how many results there are and what page you're on
 							id="searchBriefing"
-							style={{ padding: narrow && !this.props.match.params.author ? '45px 0 5px' : '15px 0 5px' }}
+							style={{
+								padding:
+									narrow &&
+									!qs.parse(this.props.location.search).author &&
+									!qs.parse(this.props.location.search).subject
+										? '45px 0 5px'
+										: '15px 0 5px'
+							}}
 						>
 							<span id="briefingParams">
-								{this.props.match.params.author ? (
-									`Title:  ${this.props.match.params.search}  -  Author:  ${this.props.match.params
-										.author}`
+								{qs.parse(this.props.location.search).subject ? (
+									`Subject:  ${qs.parse(this.props.location.search).subject}`
 								) : (
-									`Search:  ${this.props.match.params.search}`
+									''
+								)}
+								{qs.parse(this.props.location.search).search ? (
+									`Search:  ${qs.parse(this.props.location.search).search}`
+								) : (
+									''
+								)}
+								{qs.parse(this.props.location.search).title ? (
+									`Title:  ${qs.parse(this.props.location.search).title}`
+								) : (
+									''
+								)}
+								{qs.parse(this.props.location.search).author ? (
+									`${qs.parse(this.props.location.search).title ? '  -  ' : ''}Author:  ${qs.parse(
+										this.props.location.search
+									).author}`
+								) : (
+									''
 								)}
 							</span>
 							<br />
-							<span id="briefingInfo">{`Results ${(this.props.match.params.page - 1) * 15 + 1} - ${this
-								.props.match.params.page *
-								15 >
-							total
+							<span id="briefingInfo">{`Results ${(qs.parse(this.props.location.search).page - 1) * 15 +
+								1} - ${this.props.match.params.page * 15 > total
 								? total
-								: this.props.match.params.page * 15} of ${total}`}</span>
+								: qs.parse(this.props.location.search).page * 15} of ${total}`}</span>
 							{/* prev and next buttons */}
-							{this.props.match.params.page > 1 ? (
+							{qs.parse(this.props.location.search).page > 1 ? (
 								<Link
 									className="pnButtonTop previousTop"
-									to={`/results/${this.props.match.params.search}/${this.props.match.params.page * 1 -
-										1}${this.props.match.params.author
-										? `/${this.props.match.params.author}`
+									to={`/results/${qs.parse(this.props.location.search).search}/${qs.parse(
+										this.props.location.search
+									).page *
+										1 -
+										1}${qs.parse(this.props.location.search).author
+										? `/${qs.parse(this.props.location.search).author}`
 										: ''}`}
 								>
 									Previous Page
@@ -304,12 +279,15 @@ class Results extends Component {
 							) : (
 								''
 							)}
-							{this.props.match.params.page * 15 < total ? (
+							{qs.parse(this.props.location.search).page * 15 < total ? (
 								<Link
 									className="pnButtonTop nextTop"
-									to={`/results/${this.props.match.params.search}/${this.props.match.params.page * 1 +
-										1}${this.props.match.params.author
-										? `/${this.props.match.params.author}`
+									to={`/results/${qs.parse(this.props.location.search).search}/${qs.parse(
+										this.props.location.search
+									).page *
+										1 +
+										1}${qs.parse(this.props.location.search).author
+										? `/${qs.parse(this.props.location.search).author}`
 										: ''}`}
 								>
 									Next Page
@@ -320,8 +298,15 @@ class Results extends Component {
 						</div>
 						{books.map((book, key) => {
 							return <ResultLine key={key} book={book} />;
-            })}
-            <Pagination total={total} page={this.props.match.params.page} search={this.props.match.params.search} author={this.props.match.params.author} />
+						})}
+						<Pagination
+							total={total}
+							page={qs.parse(this.props.location.search).page}
+							subject={qs.parse(this.props.location.search).subject}
+							subject={qs.parse(this.props.location.search).title}
+							search={qs.parse(this.props.location.search).search}
+							author={qs.parse(this.props.location.search).author}
+						/>
 					</div>
 				</div>
 			);

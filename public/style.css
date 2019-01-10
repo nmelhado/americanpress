@@ -158,6 +158,15 @@ h1 {
   color: whitesmoke;
 }
 
+#closeMenu {
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  z-index: 52;
+}
+
 .mainContent {
 	min-height: calc(100vh - 337.5px);
 }
@@ -267,7 +276,8 @@ h1 {
 	float: left;
 	padding: 20px 0;
 	box-shadow: 0 0 20px 0 #ccc;
-	overflow-y: auto;
+  overflow-y: auto;
+  z-index: 3;
 }
 
 .sidebarHeading {

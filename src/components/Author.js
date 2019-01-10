@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class Home extends Component {
+class Author extends Component {
 	constructor() {
 		super();
 		this.state = {
@@ -20,7 +20,7 @@ class Home extends Component {
 		e.preventDefault();
 		// input is treated as q (a general search query), not a title or autor specific search
 		// the 1 in the url below starts the user in page 1 of results
-		this.props.history.push(`/results/?search=${this.state.input}&page=1`);
+		this.props.history.push(`/results/?author=${this.state.input}&page=1`);
 	}
 
 	render() {
@@ -29,11 +29,11 @@ class Home extends Component {
 		return (
 			<div className="mainContent" id="homeContent">
 				<h1>
-					Explore our library of books<br />to begin your literary adventure!
+					Search for an author<br />to begin your literary adventure!
 				</h1>
 				<form onSubmit={handleSearch} id="homeSearchForm">
 					<input
-						placeholder="Search for a book by title or author..."
+						placeholder="Search for books by author..."
 						onChange={handleChange}
 						value={input}
 						autoFocus
@@ -50,4 +50,4 @@ class Home extends Component {
 	}
 }
 
-export default Home;
+export default Author;

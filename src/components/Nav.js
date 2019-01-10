@@ -54,7 +54,7 @@ class Nav extends Component {
 		});
 		// input is treated as q (a general search query), not a title or autor specific search
 		// the 1 in the url below starts the user in page 1 of results
-		this.props.history.push(`/results/${input}/1`);
+		this.props.history.push(`/results/?search=${input}&page=1`);
 	}
 
 	render() {
