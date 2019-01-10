@@ -9,6 +9,7 @@ import Results from './components/Results';
 import Book from './components/Book';
 import Author from './components/Author';
 import Title from './components/Title';
+import Subjects from './components/Subjects';
 
 ReactDOM.render(
   <Router history={history}>
@@ -17,6 +18,7 @@ ReactDOM.render(
       <Route exact path="/" component={Home} />
       <Route path="/title" component={Title} />
       <Route path="/author" component={Author} />
+      <Route path="/subjects" component={Subjects} />
       {/* If a user filters their results by author, the author id will be placed after the page number */}
       <Route path="/results/" component={Results} />
       {/* cover is sent in order to maintain a consistent look.  If the search results contained an image, the same image will be used in the details page.  Backup is another form of identifier, in case there are no results through the works search. */}

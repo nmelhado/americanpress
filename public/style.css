@@ -490,6 +490,34 @@ h1 {
 	text-decoration: none;
 }
 
+/* Start of subjects page styling */
+
+#subjectHeader {
+  margin: 70px 0 30px;
+}
+
+#subjectContainer {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.subjectButton {
+  display: inline-block;
+  width: 100px;
+  text-align: center;
+  color: #1068a5;
+  text-decoration: none;
+  font-size: 1.4em;
+  margin: 20px 40px;
+}
+
+.subjectIcon {
+  width: 100%;
+}
+
+/* End of subjects page styling */
+
 /* Start of /book styling */
 
 #bookContent {
