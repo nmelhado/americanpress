@@ -3,7 +3,7 @@ import axios from 'axios';
 const browseQuery = (authorParam, search, title, page) => {
 	const link = `http://openlibrary.org/search.json?${authorParam ? `author=${authorParam}` : ''}${title
 		? `${authorParam ? '&' : ''}title=${title}`
-		: ''}${search ? `search=${search}` : ''}`;
+		: ''}${search ? `q=${search}` : ''}`;
 	return (
 		axios
 			// return 15 results at a time
@@ -33,7 +33,7 @@ const browseSubject = (subject, page) => {
 const pullAuthorsQuery = (authorParam, search, title) => {
 	const link = `http://openlibrary.org/search.json?${authorParam ? `author=${authorParam}` : ''}${title
 		? `${authorParam ? '&' : ''}title=${title}`
-		: ''}${search ? `search=${search}` : ''}`;
+		: ''}${search ? `q=${search}` : ''}`;
 	return axios
 		.get(`${link}&limit=9000`)
 		.then((res) => res.data.docs)
